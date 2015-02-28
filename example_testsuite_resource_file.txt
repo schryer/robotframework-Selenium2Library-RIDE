@@ -1,0 +1,49 @@
+*** Settings ***
+Documentation     *Content overview*
+...
+...               This resource file provides both variables and keyword collections that are used within _example\_testsuite.txt_.
+...
+...               *Design decisions*
+...
+...               The keyword collections defined here minimize the repitition of keyword sequences \ within _example\_tessuite.txt_. This works to both improve the readability of the tests. This, together with the use of variables, makes it possible to reuse these keyword collections within other projects.
+
+*** Variables ***
+${SITE}           www.python.org
+${SIGN IN PAGE}    /accounts/login/
+${USER PAGE}      /users/${USERNAME}/
+${SIGN OUT PAGE}    /accounts/logout/
+${SITE URL}       https://${SITE}
+${SIGN IN URL}    ${SITE URL}${SIGN IN PAGE}
+${SIGN OUT URL}    ${SITE URL}${SIGN OUT PAGE}
+${USERNAME}       schryer
+${PASSWORD}       TempTestPasswor#
+${FORM BUTTON LOCATOR}    xpath=//*/form/button
+${SIGN OUT BUTTON LOCATOR}    xpath=//*/div/div/section/form/button
+${SIGN OUT LOCATOR}    xpath=//*[@href="${SIGN OUT PAGE}"]
+${SIGN IN LOCATOR}    xpath=//*[@href="${SIGN IN PAGE}"]
+${USER MENU LOCATOR}    xpath=//*[@href="${USER PAGE}"]
+
+*** Keywords ***
+Get New Browser
+    Close Browser
+    Open Browser    ${SITE URL}
+
+Navigate To User Sign In Page
+    Go To    ${SITE URL}/
+    Click Element    ${SIGN IN LOCATOR}
+    Wait Until Page Contains Element    ${FORM BUTTON LOCATOR}
+
+Sign In User
+    Navigate To User Sign In Page
+    Input Text    id=id_login    ${USERNAME}
+    Input Password    id=id_password    ${PASSWORD}
+    Click Button    ${FORM BUTTON LOCATOR}
+
+Sign Out User
+    Sign In User
+    Wait Until Page Contains    Your account
+    Mouse Over    ${USER MENU LOCATOR}
+    Wait Until Element Is Visible    ${SIGN OUT LOCATOR}
+    Click Element    ${SIGN OUT LOCATOR}
+    Wait Until Element Is Visible    ${SIGN OUT BUTTON LOCATOR}
+    Click Button    ${SIGN OUT BUTTON LOCATOR}
